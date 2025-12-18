@@ -2,10 +2,10 @@
 
 ## Componentes del grupo 
 
-Paula Cárcel Vercher
-Ánegal Sal Golnzalez
-Sara Beses Martinez
-Mar Real Osca 
+- Paula Cárcel Vercher
+- Ánegal Sal Golnzalez
+- Sara Beses Martinez
+- Mar Real Osca 
 
 ## Descripción del problema
 
