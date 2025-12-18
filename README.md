@@ -1,5 +1,12 @@
 # Advent of Code 2025 — Día 9: Movie Theater
 
+## Componentes del grupo 
+
+Paula Cárcel Vercher
+Ánegal Sal Golnzalez
+Sara Beses Martinez
+Mar Real Osca 
+
 ## Descripción del problema
 
 El reto consiste en encontrar el rectángulo más grande que se puede formar en un suelo de baldosas, usando dos baldosas rojas como esquinas opuestas. En la Parte 2, el rectángulo solo puede incluir baldosas rojas o verdes (las verdes forman un bucle conectando las rojas y rellenan el interior).
