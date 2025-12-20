@@ -1,144 +1,111 @@
+
 # Advent of Code 2025 — Día 9: Movie Theater
 
-## Componentes del grupo 
-
+## Componentes del grupo
 - Paula Cárcel Vercher
 - Ánegal Sal Golnzalez
 - Sara Beses Martinez
-- Mar Real Osca 
+- Mar Real Osca
+
+---
 
 ## Descripción del problema
+Se busca el **rectángulo de mayor área** usando dos baldosas **rojas** como esquinas opuestas.
 
-El reto consiste en encontrar el rectángulo más grande que se puede formar en un suelo de baldosas, usando dos baldosas rojas como esquinas opuestas. En la Parte 2, el rectángulo solo puede incluir baldosas rojas o verdes (las verdes forman un bucle conectando las rojas y rellenan el interior).
-
-Ejemplo visual del enunciado:
-```
-..............
-.......#...#..
-..............
-..#....#......
-..............
-..#......#....
-..............
-.........#.#..
-..............
-```
-
-Objetivo:
-
-- Parte 1: Mayor área con esquinas rojas.
-- Parte 2: Mayor área con esquinas rojas y resto del rectángulo solo rojo/verde.
+- **Parte 1**: área máxima entre dos rojas (coordenadas **incluyentes**).
+- **Parte 2**: el rectángulo solo puede contener baldosas **rojas o verdes** (las verdes conectan rojas y rellenan el interior del bucle).
 
 ---
 
 ## Justificación de la elección
+Este reto nos permite aplicar ideas prácticas:
 
-Este problema es ideal para aplicar geometría computacional en rejillas ortogonales:
-
-- Permite usar técnicas como ray casting y validación de intersecciones.
-- Requiere eficiencia y claridad en el diseño.
-
----
-
-## Descripción técnica
-
-1. Lectura del input: coordenadas `x,y` de baldosas rojas.
-2. Construcción del contorno: aristas separadas en verticales y horizontales.
-3. Generación de candidatos: todas las parejas de baldosas rojas.
-4. Validaciones:
-    - Centro dentro o en el borde del polígono.
-    - Sin aristas atravesando el interior.
-5. Poda por área para mejorar eficiencia.
-
-Funciones principales:
-
-- `leer_puntos()`: carga y valida el input.
-- `construir_aristas()`: genera aristas y las clasifica.
-- `punto_dentro_o_borde()`: ray casting.
-- `tiene_cruce_interior()`: evita rectángulos inválidos.
-- `calcular_mejor_area()`: busca el área máxima.
+- Comprobar si un rectángulo está dentro del contorno formado por las baldosas.
+- Evitar soluciones lentas usando técnicas como **ray casting** (para saber si un punto está dentro) y comprobación de aristas.
+- Añadir una **tabla hash propia** para buscar baldosas rojas de forma rápida.
 
 ---
 
-## Alternativas descartadas
+## Estructuras usadas
+- **`HashSetPair` (tabla hash propia)**: guarda todas las baldosas **rojas** como pares `(x,y)` y permite consultar su posición de forma rápida.
+- **`vector<pair<ll,ll>> puntos`**: lista dinámica con todas las coordenadas rojas leídas del `input.txt`.
+- **`struct Arista { x1, y1, x2, y2 }`**: representa un segmento del borde (vertical u horizontal).
+- **`vector<Arista> aristas / verticales / horizontales`**:
+  - `aristas`: todas las aristas del borde (incluye el cierre).
+  - `verticales`: solo segmentos verticales.
+  - `horizontales`: solo segmentos horizontales.
 
-- Fuerza bruta por celdas → demasiado costosa.
-- Intersección general de segmentos → innecesaria (aristas ortogonales).
-- Solo vértices adyacentes → pierde soluciones óptimas.
+---
+
+## Cómo funciona la solución
+1. **Leer los puntos** del fichero y guardarlos en:
+   - Una lista con todas las coordenadas.
+   - Una tabla hash propia para búsquedas rápidas.
+
+2. **Construir el contorno** del polígono separando las aristas en:
+   - Verticales.
+   - Horizontales.
+
+### Parte 1
+- Probar todas las parejas de baldosas rojas.
+- Calcular el área con la fórmula:  
+  `(|x1 - x2| + 1) * (|y1 - y2| + 1)`.
+- Si el área no mejora la mejor encontrada, se descarta.
+
+### Parte 2
+- Comprobar que el **centro del rectángulo** está dentro del contorno (o en el borde) usando **ray casting**.
+- Verificar que **ninguna arista atraviesa el interior** del rectángulo (tocar el borde sí está permitido).
+
+Finalmente, **actualizar el área máxima** cuando el rectángulo pasa todas las comprobaciones.
+
+---
+
+**Funciones principales **
+- `leer_puntos`, `construir_aristas`
+- `punto_dentro_o_borde` 
+- `tiene_cruce_interior` 
+- `calcular_mejor_area`
+-  `HashSetPair::insert`
+-  `HashSetPair::contains`
 
 ---
 
 ## Complejidad y eficiencia
-
-- Emparejar puntos: O(n²).
-- Validaciones: O(V+H) por candidato.
-- Optimizaciones: separación vertical/horizontal y poda por área.
-
----
-
-## Corrección y pruebas
-
-- Entrada inválida → mensaje de error.
-- Menos de 2 puntos → salida 0.
-- Casos del enunciado reproducidos correctamente.
-
-Resultados:
-
-- Parte 1: `Área máxima: 4769758290`.
-- Parte 2: `Área máxima: 1588990708`.
+- Comparar todas las parejas: `O(n²)`.
+- Comprobaciones por rectángulo: dependen del número de aristas.
+- Mejoras aplicadas:
+  - **Poda por área** (si el área no mejora, se descarta).
+  - **Separación de aristas** verticales y horizontales.
+  - **Uso de tabla hash propia** para búsquedas rápidas.
 
 ---
 
-## Cómo compilar y ejecutar
+## Alternativas consideradas y por qué se descartaron
+- **Fuerza bruta por celdas**: recorrer toda la cuadrícula para comprobar cada rectángulo.  
+  *Descartada porque el coste sería enorme en entradas grandes (muy ineficiente).*
 
-Requisitos: C++17 o superior.
+- **Flood fill (BFS/DFS) para marcar interior**: rellenar el área verde y luego validar rectángulos.  
+  *Descartada porque añade complejidad y tiempo; el contorno y el ray casting ya resuelven el problema de forma más directa.*
 
-Compilar:
-```
-g++ -std=gnu++17 -O2 -Wall -Wextra -o day9 main.cpp
-```
-
-Ejecutar:
-```
-./day9 input.txt
-```
-
-Formato de `input.txt`:
-```
-7,1
-11,1
-11,7
-9,7
-9,5
-2,5
-2,3
-7,3
-```
+- **Intersección general de segmentos**: usar algoritmos genéricos para comprobar cruces.  
+  *Descartada porque las aristas son ortogonales, lo que permite simplificar mucho las comprobaciones.*
 
 ---
 
 ## Reflexión personal
+Este reto nos enseñó a:
+- Aplicar técnicas simples como **ray casting** para resolver problemas complejos sin recurrir a fuerza bruta.
+- Ver cómo una **tabla hash propia** mejora la eficiencia y mantiene el código claro.
+- La importancia de separar responsabilidades en funciones pequeñas
+  
+---
 
-- Hemos aprendido a formalizar condiciones geométricas (dentro/borde, intersecciones).
-- Separar aristas verticales/horizontales simplifica el diseño.
-- Pequeñas podas mejoran mucho la eficiencia.
+## Soluciones 
+
+**Input proporcionado en el Advent of Code (`dia09/input.txt`)**
+- Parte 1: `Área máxima: 4769758290`
+- Parte 2: `Área máxima: 1588990708`
 
 ---
 
-## Código fuente
 
-Incluye el código completo en `main.cpp`:
-```
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <utility>
-#include <cmath>
-#include <algorithm>
-#include <string>
-
-using ll = long long;
-
-struct Arista { ll x1, y1, x2, y2; };
-// ... (resto del código igual al proporcionado)
-```
