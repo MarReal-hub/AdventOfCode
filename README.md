@@ -3,7 +3,7 @@
 
 ## Componentes del grupo
 - Paula Cárcel Vercher
-- Ánegal Sal Golnzalez
+- Ángela Sal Golnzalez
 - Sara Beses Martinez
 - Mar Real Osca
 
